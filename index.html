@@ -2,11 +2,10 @@
 <html lang="en-us">
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Unity Web Player | Play-To-Earn</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
-    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes">
 </head>
 <body>
     <div id="unity-container" class="unity-mobile">
@@ -25,9 +24,11 @@
         </div>
     </div>
     <script>
-        var buildUrl = "Build";
-        var loaderUrl = buildUrl + "/PLAY-TO-EARN.loader.js";
-        var config = {
+        // Unity configuration
+        const buildUrl = "Build";
+        const loaderUrl = buildUrl + "/PLAY-TO-EARN.loader.js";
+
+        const config = {
             dataUrl: buildUrl + "/PLAY-TO-EARN.data",
             frameworkUrl: buildUrl + "/PLAY-TO-EARN.framework.js",
             codeUrl: buildUrl + "/PLAY-TO-EARN.wasm",
@@ -35,28 +36,24 @@
             companyName: "DefaultCompany",
             productName: "Play-To-Earn",
             productVersion: "1.0.2",
+            devicePixelRatio: 1, // Optimize for mobile
         };
 
-        // Detect if running on a mobile device
+        // Mobile device adjustments
         if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
             document.querySelector("#unity-container").className = "unity-mobile";
             document.querySelector("#unity-canvas").className = "unity-mobile";
-            config.devicePixelRatio = 1; // Lower resolution for better performance on mobile devices
+            config.devicePixelRatio = Math.min(window.devicePixelRatio, 2); // Limit resolution scaling
         } else {
             document.querySelector("#unity-container").className = "unity-desktop";
             document.querySelector("#unity-canvas").style.width = "960px";
             document.querySelector("#unity-canvas").style.height = "600px";
         }
 
-        // Prevent game from reloading when inputs or text areas are focused
-        window.addEventListener("focus", function () {
-            if (document.activeElement && document.activeElement.tagName === "INPUT") {
-                document.activeElement.blur();
-            }
-        });
-
-        var script = document.createElement("script");
+        // Load Unity loader script
+        const script = document.createElement("script");
         script.src = loaderUrl;
+
         script.onload = () => {
             createUnityInstance(document.querySelector("#unity-canvas"), config, (progress) => {
                 document.querySelector("#unity-progress-bar-full").style.width = 100 * progress + "%";
@@ -66,9 +63,10 @@
                     unityInstance.SetFullscreen(1);
                 };
             }).catch((message) => {
-                alert("Loading failed: " + message);
+                document.querySelector("#unity-warning").textContent = `Loading error: ${message}`;
             });
         };
+
         document.body.appendChild(script);
     </script>
 </body>
