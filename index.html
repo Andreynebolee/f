@@ -3,13 +3,13 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Unity Web Player | GAME_TO_EARN_GAME</title>
+    <title>Unity Web Player | Play-To-Earn</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
   </head>
   <body>
     <div id="unity-container" class="unity-desktop">
-      <canvas id="unity-canvas" width=1280 height=720 tabindex="-1"></canvas>
+      <canvas id="unity-canvas" width=960 height=600 tabindex="-1"></canvas>
       <div id="unity-loading-bar">
         <div id="unity-logo"></div>
         <div id="unity-progress-bar-empty">
@@ -20,7 +20,7 @@
       <div id="unity-footer">
         <div id="unity-logo-title-footer"></div>
         <div id="unity-fullscreen-button"></div>
-        <div id="unity-build-title">GAME_TO_EARN_GAME</div>
+        <div id="unity-build-title">Play-To-Earn</div>
       </div>
     </div>
     <script>
@@ -52,16 +52,16 @@
       }
 
       var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/TG_Clicker_Web.loader.js";
+      var loaderUrl = buildUrl + "/PLAY-TO-EARN.loader.js";
       var config = {
         arguments: [],
-        dataUrl: buildUrl + "/TG_Clicker_Web.data.unityweb",
-        frameworkUrl: buildUrl + "/TG_Clicker_Web.framework.js.unityweb",
-        codeUrl: buildUrl + "/TG_Clicker_Web.wasm.unityweb",
+        dataUrl: buildUrl + "/PLAY-TO-EARN.data.br",
+        frameworkUrl: buildUrl + "/PLAY-TO-EARN.framework.js.br",
+        codeUrl: buildUrl + "/PLAY-TO-EARN.wasm.br",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DefaultCompany",
-        productName: "GAME_TO_EARN_GAME",
-        productVersion: "1.0",
+        productName: "Play-To-Earn",
+        productVersion: "1.0.2",
         showBanner: unityShowBanner,
       };
 
@@ -98,8 +98,8 @@
 
       } else {
         // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
-        canvas.style.width = "1280px";
-        canvas.style.height = "720px";
+        canvas.style.width = "960px";
+        canvas.style.height = "600px";
       }
 
       document.querySelector("#unity-loading-bar").style.display = "block";
