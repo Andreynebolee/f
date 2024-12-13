@@ -1,54 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-us">
 <head>
-    <meta charset="UTF-8">
-    <title>Unity WebGL Game</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <link rel="stylesheet" href="TemplateData/style.css">
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Unity Web Player | Play-To-Earn</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
-    <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-        }
-
-        #unity-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-        }
-
-        #unity-canvas {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-        }
-
-        #unity-loading-bar {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: #000;
-            z-index: 9999;
-        }
-
-        #unity-progress-bar-full {
-            width: 0;
-            height: 20px;
-            background: #4caf50;
-            transition: width 0.2s;
-        }
-    </style>
+    <link rel="stylesheet" href="TemplateData/style.css">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes">
 </head>
 <body>
-    <div id="unity-container">
-        <canvas id="unity-canvas"></canvas>
+    <div id="unity-container" class="unity-mobile">
+        <canvas id="unity-canvas" tabindex="0"></canvas>
         <div id="unity-loading-bar">
             <div id="unity-logo"></div>
             <div id="unity-progress-bar-empty">
@@ -56,40 +18,13 @@
             </div>
         </div>
         <div id="unity-warning"></div>
+        <div id="unity-footer">
+            <div id="unity-logo-title-footer"></div>
+            <div id="unity-fullscreen-button"></div>
+            <div id="unity-build-title">Play-To-Earn</div>
+        </div>
     </div>
     <script>
-        var unityInstance = null;
-
-        function resizeCanvas() {
-            var canvas = document.querySelector("#unity-canvas");
-            if (canvas) {
-                canvas.style.width = window.innerWidth + "px";
-                canvas.style.height = window.innerHeight + "px";
-            }
-        }
-
-        // Обработка восстановления приложения
-        window.addEventListener("focus", () => {
-            if (unityInstance && unityInstance.Module) {
-                if (unityInstance.Module.resumeRuntime) {
-                    unityInstance.Module.resumeRuntime();
-                    resizeCanvas();
-                }
-            }
-        });
-
-        // Обработка потери фокуса
-        window.addEventListener("blur", () => {
-            if (unityInstance && unityInstance.Module) {
-                if (unityInstance.Module.pauseRuntime) {
-                    unityInstance.Module.pauseRuntime();
-                }
-            }
-        });
-
-        // Автоматическое обновление размеров
-        window.addEventListener("resize", resizeCanvas);
-
         var buildUrl = "Build";
         var loaderUrl = buildUrl + "/PLAY-TO-EARN.loader.js";
         var config = {
@@ -100,25 +35,41 @@
             companyName: "DefaultCompany",
             productName: "Play-To-Earn",
             productVersion: "1.0.2",
-            showBanner: unityShowBanner,
         };
 
-        document.addEventListener("DOMContentLoaded", () => {
-            var canvas = document.querySelector("#unity-canvas");
-            var script = document.createElement("script");
-            script.src = loaderUrl;
-            script.onload = () => {
-                createUnityInstance(canvas, config, (progress) => {
-                    document.querySelector("#unity-progress-bar-full").style.width = 100 * progress + "%";
-                }).then((instance) => {
-                    unityInstance = instance;
-                    document.querySelector("#unity-loading-bar").style.display = "none";
-                }).catch((message) => {
-                    alert(message);
-                });
-            };
-            document.body.appendChild(script);
+        // Detect if running on a mobile device
+        if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+            document.querySelector("#unity-container").className = "unity-mobile";
+            document.querySelector("#unity-canvas").className = "unity-mobile";
+            config.devicePixelRatio = 1; // Lower resolution for better performance on mobile devices
+        } else {
+            document.querySelector("#unity-container").className = "unity-desktop";
+            document.querySelector("#unity-canvas").style.width = "960px";
+            document.querySelector("#unity-canvas").style.height = "600px";
+        }
+
+        // Prevent game from reloading when inputs or text areas are focused
+        window.addEventListener("focus", function () {
+            if (document.activeElement && document.activeElement.tagName === "INPUT") {
+                document.activeElement.blur();
+            }
         });
+
+        var script = document.createElement("script");
+        script.src = loaderUrl;
+        script.onload = () => {
+            createUnityInstance(document.querySelector("#unity-canvas"), config, (progress) => {
+                document.querySelector("#unity-progress-bar-full").style.width = 100 * progress + "%";
+            }).then((unityInstance) => {
+                document.querySelector("#unity-loading-bar").style.display = "none";
+                document.querySelector("#unity-fullscreen-button").onclick = () => {
+                    unityInstance.SetFullscreen(1);
+                };
+            }).catch((message) => {
+                alert("Loading failed: " + message);
+            });
+        };
+        document.body.appendChild(script);
     </script>
 </body>
 </html>
