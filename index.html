@@ -7,26 +7,17 @@
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
 
-    <!-- Добавляем мета-тег для блокировки ориентации -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, orientation=portrait">
-    <style>
-        /* Обеспечиваем правильную масштабируемость и выравнивание для вертикальной ориентации */
-        #unity-container {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        canvas.unity-mobile {
-            width: 100%;
-            height: auto;
-            max-height: 100vh;
-        }
-    </style>
+    <!-- Блокировка масштабирования и ориентации -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, orientation=portrait">
+    <script>
+        // Блокировка смены ориентации
+        window.addEventListener("orientationchange", function () {
+            if (window.orientation !== 0) {
+                alert("Пожалуйста, используйте вертикальную ориентацию!");
+                window.location.reload(); // Перезагрузка, чтобы избежать черного экрана
+            }
+        });
+    </script>
 </head>
 <body>
     <div id="unity-container" class="unity-mobile">
@@ -50,14 +41,14 @@
         function unityShowBanner(msg, type) {
             var warningBanner = document.querySelector("#unity-warning");
             function updateBannerVisibility() {
-                warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
+                warningBanner.style.display = warningBanner.children.length ? "block" : "none";
             }
-            var div = document.createElement('div');
+            var div = document.createElement("div");
             div.innerHTML = msg;
             warningBanner.appendChild(div);
-            if (type == 'error') div.style = 'background: red; padding: 10px;';
+            if (type == "error") div.style = "background: red; padding: 10px;";
             else {
-                if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
+                if (type == "warning") div.style = "background: yellow; padding: 10px;";
                 setTimeout(function () {
                     warningBanner.removeChild(div);
                     updateBannerVisibility();
@@ -81,10 +72,11 @@
         };
 
         if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-            var meta = document.createElement('meta');
-            meta.name = 'viewport';
-            meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
-            document.getElementsByTagName('head')[0].appendChild(meta);
+            var meta = document.createElement("meta");
+            meta.name = "viewport";
+            meta.content =
+                "width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=yes";
+            document.getElementsByTagName("head")[0].appendChild(meta);
             document.querySelector("#unity-container").className = "unity-mobile";
             canvas.className = "unity-mobile";
         } else {
@@ -98,19 +90,21 @@
         script.src = loaderUrl;
         script.onload = () => {
             createUnityInstance(canvas, config, (progress) => {
-                document.querySelector("#unity-progress-bar-full").style.width = 100 * progress + "%";
-            }).then((unityInstance) => {
-                document.querySelector("#unity-loading-bar").style.display = "none";
-                document.querySelector("#unity-fullscreen-button").onclick = () => {
-                    unityInstance.SetFullscreen(1);
-                };
-            }).catch((message) => {
-                alert(message);
-            });
+                document.querySelector("#unity-progress-bar-full").style.width =
+                    100 * progress + "%";
+            })
+                .then((unityInstance) => {
+                    document.querySelector("#unity-loading-bar").style.display = "none";
+                    document.querySelector("#unity-fullscreen-button").onclick = () => {
+                        unityInstance.SetFullscreen(1);
+                    };
+                })
+                .catch((message) => {
+                    alert(message);
+                });
         };
 
         document.body.appendChild(script);
-
     </script>
 </body>
 </html>
