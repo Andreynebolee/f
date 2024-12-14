@@ -66,8 +66,10 @@
 
             window.addEventListener('orientationchange', () => {
                 setTimeout(() => {
-                    canvas.style.width = window.innerWidth + "px";
-                    canvas.style.height = window.innerHeight + "px";
+                    if (window.innerWidth > window.innerHeight) { // Horizontal orientation
+                        canvas.style.width = window.innerWidth + "px";
+                        canvas.style.height = window.innerHeight + "px";
+                    }
                 }, 200);
             });
         } else {
