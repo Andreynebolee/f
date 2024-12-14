@@ -97,6 +97,12 @@
             canvas.style.height = "100%";
 
             window.addEventListener('resize', checkOrientation);
+            window.addEventListener('orientationchange', () => {
+                if (window.innerWidth > window.innerHeight) {
+                    alert("Please rotate your device to portrait orientation.");
+                }
+            });
+
             checkOrientation();
         } else {
             canvas.style.width = "1920px";
