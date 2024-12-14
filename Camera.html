@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camera Stream</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+
+        video {
+            max-width: 100%;
+            border: 2px solid #000;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Live Camera Stream</h1>
+    <video id="video" autoplay playsinline></video>
+
+    <script>
+        const video = document.getElementById('video');
+
+        // Access the user's camera
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then((stream) => {
+                video.srcObject = stream;
+            })
+            .catch((err) => {
+                console.error('Error accessing the camera:', err);
+                alert('Unable to access the camera. Please check permissions.');
+            });
+    </script>
+</body>
+</html>
