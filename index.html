@@ -97,10 +97,11 @@
             canvas.style.height = "100%";
 
             window.addEventListener('orientationchange', checkOrientation);
+            window.addEventListener('resize', checkOrientation);
             checkOrientation();
         } else {
-            canvas.style.width = "1920px";
-            canvas.style.height = "1080px";
+            canvas.style.width = "1280px";
+            canvas.style.height = "720px";
         }
 
         document.querySelector("#unity-loading-bar").style.display = "block";
