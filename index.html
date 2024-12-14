@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="TemplateData/style.css">
     <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=no">
     <style>
-        #rotate-message {
+        #orientation-lock-message {
             display: none;
             position: fixed;
             top: 0;
@@ -21,6 +21,10 @@
             text-align: center;
             padding-top: 40%;
             z-index: 1000;
+        }
+
+        body.locked {
+            overflow: hidden;
         }
     </style>
 </head>
@@ -41,11 +45,11 @@
         </div>
     </div>
 
-    <div id="rotate-message">Please rotate your device to portrait orientation.</div>
+    <div id="orientation-lock-message">Please keep your device in portrait orientation.</div>
 
     <script>
         var canvas = document.querySelector("#unity-canvas");
-        var rotateMessage = document.querySelector("#rotate-message");
+        var orientationLockMessage = document.querySelector("#orientation-lock-message");
 
         function unityShowBanner(msg, type) {
             var warningBanner = document.querySelector("#unity-warning");
@@ -82,11 +86,11 @@
 
         function checkOrientation() {
             if (window.matchMedia("(orientation: landscape)").matches) {
-                rotateMessage.style.display = "block";
-                document.querySelector("#unity-container").style.display = "none";
+                orientationLockMessage.style.display = "block";
+                document.body.classList.add("locked");
             } else {
-                rotateMessage.style.display = "none";
-                document.querySelector("#unity-container").style.display = "block";
+                orientationLockMessage.style.display = "none";
+                document.body.classList.remove("locked");
             }
         }
 
