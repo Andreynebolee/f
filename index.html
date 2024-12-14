@@ -51,11 +51,11 @@
         function handleOrientationChange() {
             const orientation = screen.orientation || {};
             if (orientation.type && orientation.type.startsWith("landscape")) {
-                rotateMessage.style.display = "block";
-                unityContainer.style.display = "none";
-            } else {
                 rotateMessage.style.display = "none";
                 unityContainer.style.display = "block";
+            } else {
+                rotateMessage.style.display = "block";
+                unityContainer.style.display = "none";
             }
         }
 
