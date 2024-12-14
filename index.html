@@ -81,7 +81,7 @@
         };
 
         function checkOrientation() {
-            if (window.orientation === 90 || window.orientation === -90) {
+            if (window.matchMedia("(orientation: landscape)").matches) {
                 rotateMessage.style.display = "block";
                 document.querySelector("#unity-container").style.display = "none";
             } else {
@@ -100,8 +100,8 @@
             window.addEventListener('resize', checkOrientation);
             checkOrientation();
         } else {
-            canvas.style.width = "1280px";
-            canvas.style.height = "720px";
+            canvas.style.width = "100%";
+            canvas.style.height = "100%";
         }
 
         document.querySelector("#unity-loading-bar").style.display = "block";
