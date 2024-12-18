@@ -1,127 +1,263 @@
-<!DOCTYPE html>
-<html lang="en-us">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Unity Web Player | Play_To_Earn_YandexGame</title>
-    <link rel="shortcut icon" href="TemplateData/favicon.ico">
-    <link rel="stylesheet" href="TemplateData/style.css">
-  </head>
-  <body>
-    <div id="unity-container" class="unity-desktop">
-      <canvas id="unity-canvas" width=1080 height=1920 tabindex="-1"></canvas>
-      <div id="unity-loading-bar">
-        <div id="unity-logo"></div>
-        <div id="unity-progress-bar-empty">
-          <div id="unity-progress-bar-full"></div>
-        </div>
-      </div>
-      <div id="unity-warning"> </div>
-      <div id="unity-footer">
-        <div id="unity-logo-title-footer"></div>
-        <div id="unity-fullscreen-button"></div>
-        <div id="unity-build-title">Play_To_Earn_YandexGame</div>
-      </div>
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кликер с энергией</title>
+    <style>
+        /* Общие стили */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #141414, #1f1f1f);
+            color: white;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Панель статистики */
+        #stats {
+            text-align: center;
+            padding: 10px;
+            z-index: 2;
+        }
+
+            #stats h1 {
+                margin: 0;
+                font-size: 2rem;
+            }
+
+            #stats p {
+                margin: 5px 0 0;
+                font-size: 1rem;
+                opacity: 0.8;
+            }
+
+        /* Энергия */
+        #energy-bar-container {
+            width: 90%;
+            margin: 10px auto;
+            background: #333;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        #energy-bar {
+            height: 20px;
+            background: #ffc107;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        #energy-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.9rem;
+        }
+
+        /* Кликер панель */
+        #clicker-panel {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #clicker-button {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, #ffcc00, #ff9900);
+            border: none;
+            border-radius: 50%;
+            font-size: 3rem;
+            color: black;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        /* Анимация тряски */
+        @keyframes shake {
+            0%, 100% {
+                transform: translate(0, 0);
+            }
+
+            25% {
+                transform: translate(-5px, 0);
+            }
+
+            50% {
+                transform: translate(5px, 0);
+            }
+
+            75% {
+                transform: translate(-5px, 0);
+            }
+        }
+
+        #clicker-button.shake {
+            animation: shake 0.4s;
+        }
+
+        /* Нижнее меню */
+        #bottom-menu {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background: #222;
+            padding: 10px 0;
+            z-index: 3;
+        }
+
+        .menu-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #aaa;
+            cursor: pointer;
+        }
+
+            .menu-item span {
+                margin-top: 5px;
+                font-size: 0.8rem;
+            }
+
+        /* Всплывающие панели */
+        .popup-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            z-index: 2;
+        }
+
+            .popup-panel.active {
+                display: flex;
+            }
+
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            padding: 5px 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Статистика -->
+    <div id="stats">
+        <h1 id="coins">0</h1>
+        <p>Ранг: <span id="rank">Нет данных</span></p>
     </div>
+
+    <!-- Индикатор энергии -->
+    <div id="energy-bar-container">
+        <div id="energy-bar"></div>
+        <span id="energy-text">100 / 100</span>
+    </div>
+
+    <!-- Кликер панель -->
+    <div id="clicker-panel">
+        <button id="clicker-button">⬆️</button>
+    </div>
+
+    <!-- Всплывающие панели -->
+    <div id="friends-panel" class="popup-panel">
+        <button class="close-button" onclick="closePanel('friends-panel')">Закрыть</button>
+        <h2>Друзья</h2>
+        <p>Секция в разработке.</p>
+    </div>
+
+    <div id="roulette-panel" class="popup-panel">
+        <button class="close-button" onclick="closePanel('roulette-panel')">Закрыть</button>
+        <h2>Рулетка</h2>
+        <p>Секция в разработке.</p>
+    </div>
+
+    <div id="boosts-panel" class="popup-panel">
+        <button class="close-button" onclick="closePanel('boosts-panel')">Закрыть</button>
+        <h2>Усиления</h2>
+        <p>Секция в разработке.</p>
+    </div>
+
+    <!-- Нижнее меню -->
+    <div id="bottom-menu">
+        <div class="menu-item" onclick="openPanel('friends-panel')">
+            <span>👫</span>
+            <span>Frens</span>
+        </div>
+        <div class="menu-item" onclick="openPanel('roulette-panel')">
+            <span>🎰</span>
+            <span>Roulette</span>
+        </div>
+        <div class="menu-item" onclick="openPanel('boosts-panel')">
+            <span>⚡</span>
+            <span>Boosts</span>
+        </div>
+    </div>
+
     <script>
-      var canvas = document.querySelector("#unity-canvas");
+        let coins = 0;
+        let energy = 100;
+        const maxEnergy = 100;
+        const energyRecoveryRate = 1;
+        const energyCostPerClick = 10;
 
-      // Shows a temporary message banner/ribbon for a few seconds, or
-      // a permanent error message on top of the canvas if type=='error'.
-      // If type=='warning', a yellow highlight color is used.
-      // Modify or remove this function to customize the visually presented
-      // way that non-critical warnings and error messages are presented to the
-      // user.
-      function unityShowBanner(msg, type) {
-        var warningBanner = document.querySelector("#unity-warning");
-        function updateBannerVisibility() {
-          warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
+        const coinsEl = document.getElementById('coins');
+        const energyBar = document.getElementById('energy-bar');
+        const energyText = document.getElementById('energy-text');
+        const clickerButton = document.getElementById('clicker-button');
+
+        function updateEnergy() {
+            energyBar.style.width = `${(energy / maxEnergy) * 100}%`;
+            energyText.textContent = `${Math.floor(energy)} / ${maxEnergy}`;
         }
-        var div = document.createElement('div');
-        div.innerHTML = msg;
-        warningBanner.appendChild(div);
-        if (type == 'error') div.style = 'background: red; padding: 10px;';
-        else {
-          if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
-          setTimeout(function() {
-            warningBanner.removeChild(div);
-            updateBannerVisibility();
-          }, 5000);
+
+        clickerButton.addEventListener('click', () => {
+            if (energy >= energyCostPerClick) {
+                energy -= energyCostPerClick;
+                coins += 1;
+                coinsEl.textContent = coins;
+                updateEnergy();
+                clickerButton.classList.add('shake');
+                setTimeout(() => clickerButton.classList.remove('shake'), 400);
+            } else {
+                alert('Недостаточно энергии!');
+            }
+        });
+
+        setInterval(() => {
+            if (energy < maxEnergy) {
+                energy += energyRecoveryRate;
+                if (energy > maxEnergy) energy = maxEnergy;
+                updateEnergy();
+            }
+        }, 1000);
+
+        function openPanel(panelId) {
+            document.getElementById(panelId).classList.add('active');
         }
-        updateBannerVisibility();
-      }
 
-      var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/Dermo.loader.js";
-      var config = {
-        arguments: [],
-        dataUrl: buildUrl + "/Dermo.data",
-        frameworkUrl: buildUrl + "/Dermo.framework.js",
-        codeUrl: buildUrl + "/Dermo.wasm",
-        streamingAssetsUrl: "StreamingAssets",
-        companyName: "DefaultCompany",
-        productName: "Play_To_Earn_YandexGame",
-        productVersion: "1.0",
-        showBanner: unityShowBanner,
-      };
-
-      // By default, Unity keeps WebGL canvas render target size matched with
-      // the DOM size of the canvas element (scaled by window.devicePixelRatio)
-      // Set this to false if you want to decouple this synchronization from
-      // happening inside the engine, and you would instead like to size up
-      // the canvas DOM size and WebGL render target sizes yourself.
-      // config.matchWebGLToCanvasSize = false;
-
-      // If you would like all file writes inside Unity Application.persistentDataPath
-      // directory to automatically persist so that the contents are remembered when
-      // the user revisits the site the next time, uncomment the following line:
-      // config.autoSyncPersistentDataPath = true;
-      // This autosyncing is currently not the default behavior to avoid regressing
-      // existing user projects that might rely on the earlier manual
-      // JS_FileSystem_Sync() behavior, but in future Unity version, this will be
-      // expected to change.
-
-      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-        // Mobile device style: fill the whole browser client area with the game canvas:
-
-        var meta = document.createElement('meta');
-        meta.name = 'viewport';
-        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
-        document.getElementsByTagName('head')[0].appendChild(meta);
-        document.querySelector("#unity-container").className = "unity-mobile";
-        canvas.className = "unity-mobile";
-
-        // To lower canvas resolution on mobile devices to gain some
-        // performance, uncomment the following line:
-        // config.devicePixelRatio = 1;
-
-
-      } else {
-        // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
-        canvas.style.width = "1080px";
-        canvas.style.height = "1920px";
-      }
-
-      document.querySelector("#unity-loading-bar").style.display = "block";
-
-      var script = document.createElement("script");
-      script.src = loaderUrl;
-      script.onload = () => {
-        createUnityInstance(canvas, config, (progress) => {
-          document.querySelector("#unity-progress-bar-full").style.width = 100 * progress + "%";
-              }).then((unityInstance) => {
-                document.querySelector("#unity-loading-bar").style.display = "none";
-                document.querySelector("#unity-fullscreen-button").onclick = () => {
-                  unityInstance.SetFullscreen(1);
-                };
-
-              }).catch((message) => {
-                alert(message);
-              });
-            };
-
-      document.body.appendChild(script);
-
+        function closePanel(panelId) {
+            document.getElementById(panelId).classList.remove('active');
+        }
     </script>
-  </body>
+</body>
 </html>
